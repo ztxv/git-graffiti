@@ -1,77 +1,222 @@
+<div align="center">
+
+[![Version](https://img.shields.io/badge/version-v0.1.0-c6f36a?style=flat-square&labelColor=171e1a)](https://github.com/ztxv/git-graffiti)
+![Node](https://img.shields.io/badge/Node.js-22.12%2B-43853d?style=flat-square)
+![Local first](https://img.shields.io/badge/local--first-no_account-91b66a?style=flat-square)
+[![License](https://img.shields.io/badge/license-MIT-a6b598?style=flat-square)](LICENSE)
+
 # Git Graffiti
 
-A local pixel-art studio for your GitHub contribution graph. Type a message, paint a design, and turn the exact pixels into a standalone Git repository.
+### Your profile. Your canvas. Leave your mark.
 
-## Run it
+Turn your GitHub contribution graph into pixel art.<br/>
+Write a message, paint a pattern, and generate the Git history behind it—all on your own machine.
 
-Requires Node.js 22.12+ and Git.
+[Quick start](#quick-start) · [Features](#features) · [How it works](#how-it-works) · [Publishing](#publishing) · [Development](#development)
 
-```sh
+<img src="docs/studio-dark.png" alt="Git Graffiti in dark mode with a contribution-graph pixel canvas" width="1200" />
+
+</div>
+
+## Why Git Graffiti?
+
+Your contribution graph is already a grid of pixels. Git Graffiti gives you the tools to design it: a seven-row canvas, a pixel font, adjustable shades, and a local commit generator that follows the artwork you made.
+
+- Stamp names, messages, and small Easter eggs in a 5×7 pixel font
+- Paint directly on calendar dates with five shades, an eraser, and a cycling brush
+- Undo a stroke, try a preset, or export a design to share
+- Generate a separate repository from the exact design
+- Work in dark or light mode with no account, OAuth, or API keys
+
+> [!NOTE]
+> The preview shows your design's planned commits. Existing GitHub activity and GitHub's contribution rules can affect the final appearance. Colors are illustrative.
+
+## Quick start
+
+You need **Node.js 22.12 or newer**, npm, and Git on your PATH.
+
+```bash
+git clone https://github.com/ztxv/git-graffiti.git
+cd git-graffiti
 npm ci
 npm start
 ```
 
-Open http://127.0.0.1:3000. For another port, run `PORT=4318 npm start`.
-This delivered copy already has its dependencies installed. No login is needed to draw or generate.
+Open **[http://127.0.0.1:3000](http://127.0.0.1:3000)**. Keep the terminal running while you use the studio.
 
-## Design your graph
+To use another port on macOS, Linux, or Git Bash:
 
-1. Choose a year. The default is the last completed year, so the whole canvas is available.
-2. Type a message and press **Stamp text**, or draw directly on the grid.
-3. Use **Paint** with a chosen shade, **Erase**, or **Cycle** (empty → shades 1–4 → empty). Click or drag; keyboard users can Tab into the canvas, move with arrow keys, and draw with Space or Enter.
-4. Undo/redo works across strokes, text stamps, imports, year changes, and clearing. Stamps and presets replace the canvas; undo recovers the previous design.
-5. Adjust the four increasing commit counts under **Commit counts per shade**. Defaults are 1, 3, 6, and 10. The preview's shades are illustrative, not a promise of GitHub's final colors.
-6. Export a JSON design to save or share it. Import accepts validated v1 design files. A valid draft is also saved automatically in this browser.
-7. Enter your author name, GitHub-linked email, and a new folder name. **Generate repository** creates `generated/<folder>`, then displays a copyable publishing command.
+```bash
+PORT=4318 npm start
+```
 
-The 5×7 font supports A–Z (lowercase is converted), digits, spaces, `! ? . - < > /`, and `♥`. Each character takes five columns, with one separating column. A typical 53-column year fits nine characters only when the painted pixels fit its partial edge weeks. Overflow and unavailable dates are rejected, rather than silently truncating text.
+The server listens only on your machine. Dependencies require an internet connection to install; drawing and repository generation work offline afterward.
 
-## Calendar and contribution behavior
+## Features
 
-- Columns are Sunday–Saturday weeks. Most years occupy 53 columns; some leap years need 54. Edge cells outside the selected year cannot be painted.
-- Future dates are disabled. Changing years retains week/weekday positions and clears pixels that become unavailable. Undo recovers them.
-- The graph represents the selected **calendar year**. On GitHub, select that year to view it; the default rolling contribution view can crop older artwork.
-- Existing contributions are not fetched or subtracted. They may fill blank pixels or alter the apparent shades. This app adds commits; it cannot erase other activity.
-- Each pixel becomes its configured number of empty commits at noon UTC, one second apart. Both author and committer timestamps match. Empty cells generate no commits. The inherited engine creates a `main` branch without adding an extra initial commit.
-- Counts are limited to 100 per painted day and 25,000 per design. Existing destination folders are never overwritten.
+### A canvas made of dates
 
-GitHub requires the commit email to be associated with your account and eligible commits to be on the repository's default or `gh-pages` branch. Use a new standalone repository, not a fork. See [GitHub's profile contributions reference](https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference) for the complete rules. Private contribution visibility is controlled in your GitHub settings. Changes may take time to appear.
+Choose a calendar year and paint its contribution graph. Columns are weeks; rows run from Sunday to Saturday. The editor accounts for leap years and partial weeks, and disables future dates.
+
+| Tool | What it does |
+| --- | --- |
+| Paint | Applies the selected shade; click or drag across days |
+| Erase | Clears painted pixels |
+| Cycle | Steps through empty → shades 1–4 → empty |
+| Stamp text | Replaces the canvas with a message aligned left, center, or right |
+| Undo / redo | Restores strokes, stamps, imports, year changes, and cleared artwork |
+| Import / export | Saves and loads a portable, validated JSON design |
+
+Use **Tab** to enter the canvas, **arrow keys** to move, and **Space** or **Enter** to draw.
+
+### Text and shades
+
+The 5×7 font supports letters, digits, spaces, `! ? . - < > /`, and `♥`. Lowercase becomes uppercase. Each character uses five columns plus one separating column; text that does not fit is rejected without changing your artwork.
+
+Four painted shades map to increasing commit counts. Defaults are **1, 3, 6, and 10 commits per day**. Adjust them under **Commit counts per shade**. Blank pixels produce no commits.
+
+### A quiet, responsive workspace
+
+- Dark mode by default, with a top-right light/dark toggle and GitHub link
+- Theme preference and valid design drafts saved in the current browser
+- Consistent Lucide icons and shared shadcn/Radix button controls
+- Subtle Motion interactions and an animated generation progress bar
+- Reduced-motion preferences respected across transitions and loading states
+- Horizontally scrollable calendar on narrow screens
+
+### Local repository generation
+
+Enter your author name, a GitHub-linked email, and a new folder name. The app creates `generated/<folder>` with a `main` branch and the exact planned timestamps. Both author and committer dates are set; existing folders are never overwritten.
+
+Generation displays progress and supports cancellation. A handled cancellation removes only the new partial repository.
+
+## How it works
+
+```text
+Text stamp or freehand drawing
+              ↓
+       Pixel matrix (0–4)
+              ↓
+    Calendar dates + shade counts
+              ↓
+      Validated, stored commit plan
+              ↓
+       Local Git repository
+              ↓
+      Optional push to GitHub
+```
+
+The same calendar and design-validation module runs in the browser and server. The UI requests an exact preview plan and generation consumes its ID, keeping the generated commits tied to the design.
+
+Commits are empty commits placed at noon UTC, one second apart per day. No extra initial commit is added. The result's working directory is empty because the artwork lives in its Git history.
 
 ## Publishing
 
-Generation is local. The app does not log in or push anything automatically.
+The app displays a publishing command when generation finishes. Select **Public** or **Private**, then copy it into Bash, Zsh, or Git Bash.
 
-After generation, choose Public or Private and copy the displayed command. Run it in Bash, Zsh, or Git Bash with [GitHub CLI](https://cli.github.com/) installed and authenticated (`gh auth login`). The command creates a new repository with the generated folder's name and pushes its `main` branch. Choose an unused name; do not pre-create the remote.
+Install [GitHub CLI](https://cli.github.com/) and authenticate once:
 
-The generated repository contains only Git history. An empty working directory is expected.
+```bash
+gh auth login
+```
+
+The generated command creates a new GitHub repository and pushes the local `main` branch. Choose an unused repository name; do not create the remote beforehand. The app itself does not authenticate, create remote repositories, or push automatically.
+
+For contributions to count, use an email associated with your GitHub account and an eligible branch in a standalone repository. Review [GitHub's contribution rules](https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference). Private contribution visibility depends on your profile settings.
+
+## Technology
+
+| Layer | Technology |
+| --- | --- |
+| Interface | React 19, Vite 7, Tailwind CSS 4 |
+| Controls | shadcn/ui Button source, Radix Slot, class-variance-authority |
+| Icons | Lucide React, Primer Octicons |
+| Animation | Motion for React |
+| Local API | Node.js HTTP server |
+| Generation | Git CLI, executed with argument arrays |
+| Persistence | Browser `localStorage`; JSON design files |
+| Tests | Node.js built-in test runner and real temporary Git repositories |
 
 ## Development
 
-```sh
-npm run dev   # Vite on 5173 + local API on 3000
-npm run build
-npm test
+```bash
+npm run dev          # Vite on 5173 + local API on 3000
+npm run build        # Build the production interface
+npm run start:server # Serve the existing build
+npm test             # Run the regression suite
+npm run cli -- --preview # Preview the inherited CLI's random activity planner
 ```
 
-Architecture:
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173) during development. Restart the development process after backend changes. `npm run lint` is the inherited Prettier command: it formats backend JavaScript in place rather than running a full-project lint check.
+
+### Project structure
 
 ```text
-text / drawing → column-major pixel matrix → UTC dates + shade counts → Git commits
+shared/
+  art.mjs                   Calendar, pixel font, validation, exact art plans
+web/
+  main.jsx                  Drawing, text, history, files, generation flow
+  style.css                 Light/dark themes and responsive layout
+  components/
+    theme-toggle.jsx        Persistent theme switch
+    interface-motion.jsx    Animated buttons and generation progress
+    publish-instructions.jsx
+    ui/button.jsx           Adapted shadcn/Radix button primitive
+public/
+  theme.js                  Theme selection before the first render
+src/
+  server.js                 Local API, preview storage, generation jobs
+  repository.js             Git execution, identity, progress, cleanup
+  planner.js                Retained random activity planner for the CLI
+  cli.js                    Legacy command-line entry point
+test/
+  art.test.js               Calendar, font, validation, art API → Git tests
+  history.test.js           Original engine, API, CLI, cancellation tests
 ```
 
-- `shared/art.mjs`: font rasterization, calendar coordinates, design validation, deterministic art plans. Used by browser and server.
-- `web/main.jsx`, `web/style.css`: editor, autosave, file import/export, generation progress.
-- `src/server.js`: loopback-only HTTP service. `POST /api/art/preview` validates and stores an exact design plan; `POST /api/generate` consumes its preview ID.
-- `src/repository.js`: inherited Git execution, identity validation, cancellation and cleanup.
-- `test/art.test.js`: calendar and font validation plus a real art API → Git integration test.
-- `test/history.test.js`: original engine, API, CLI, cancellation and shell-quoting coverage.
+## Local data and limits
 
-The legacy CLI and random-plan endpoint are retained for compatibility. The browser product is centered on pixel art.
+| Item | Behavior |
+| --- | --- |
+| Draft and theme | Saved in this browser; no cloud sync |
+| Author identity | Entered locally; not persisted by the UI |
+| Design exports | Year, pixels, shade mapping, and format version only |
+| Canvas | Usually 53 × 7; some leap years require 54 columns |
+| Counts | Up to 100 commits per painted day and 25,000 per design |
+| Generation | One running job per server |
+| Preview storage | In memory; up to 20 previews, expiring after 30 minutes |
+| Generated output | Independent repositories under `generated/`, ignored by Git |
 
-The server supports one generation at a time. Cancel removes the newly created partial repository. An abrupt shutdown may leave a partial folder. Jobs live in server memory; browser refresh does not reconnect to a running job, so keep the generation page open until completion or cancellation. Export files contain only the year, pixels, shade mapping and format version, not the author identity. Identity fields are not persisted.
+## Current limitations
 
-This is a local application, not an authenticated hosted service. GitHub profile rendering has not been verified through an actual push; tests verify local Git output without changing an account.
+- Designs use a selected calendar year. Select that year on GitHub to view it; the default rolling view may crop older artwork.
+- Existing contributions are not fetched or removed. They can fill blank pixels and change apparent shades.
+- Changing years preserves week/weekday positions and clears unavailable pixels. Undo restores the previous design.
+- Keep the generation page open. Refreshing does not reconnect to a running job; jobs are not restored after a server restart.
+- An abrupt shutdown can leave a partial output folder. Choose a new folder name after inspecting it.
+- Local Git output is tested. Actual GitHub profile rendering still needs verification through a real push.
+- This application is intended for local use, not as an authenticated public service.
+
+## Contributing
+
+Focused fixes, pixel fonts, and editor improvements are welcome.
+
+1. Fork the repository and create a branch for your change.
+2. Run `npm test` and `npm run build`.
+3. For interface changes, check both themes, desktop and mobile layouts, keyboard controls, and reduced motion.
+4. Open a pull request describing the resulting behavior and how you verified it.
 
 ## Credits and license
 
-Based on the user's Git Larp application and [artiebits/fake-git-history](https://github.com/artiebits/fake-git-history), originally created by Artur Khusaenov. This separate project retains the original MIT license and copyright notice in `LICENSE`.
+Built on Git Larp and [artiebits/fake-git-history](https://github.com/artiebits/fake-git-history), originally created by Artur Khusaenov. Distributed under the [MIT license](LICENSE); retain the original copyright notice.
+
+The header links to the project repository with the official [Primer Octicons GitHub mark](https://primer.style/octicons/icon/mark-github-16/). The interface uses free, open-source assets: [Lucide](https://lucide.dev/guide/react) (ISC), [Primer Octicons](https://primer.style/octicons/) (MIT), [shadcn/ui](https://ui.shadcn.com/docs/components/button) (MIT), [Radix](https://www.radix-ui.com/primitives/docs/utilities/slot) (MIT), and [Motion](https://motion.dev/docs/react) (MIT). See [third-party notices](THIRD_PARTY_NOTICES.md).
+
+---
+
+<div align="center">
+
+**Git Graffiti v0.1.0** · Built by [ztxv](https://github.com/ztxv)<br/>
+A little less spreadsheet. A little more self-expression.
+
+</div>

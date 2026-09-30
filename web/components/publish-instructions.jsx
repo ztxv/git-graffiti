@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
-import { Button } from "./ui/button";
+import { AnimatedButton as Button } from "./interface-motion";
 import { publishCommand } from "../publish-command.mjs";
 export function PublishInstructions({ path }) {
   const [visibility, setVisibility] = useState("public");

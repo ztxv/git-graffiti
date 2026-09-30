@@ -1,37 +1,36 @@
+// Adapted from shadcn/ui's MIT-licensed New York Button registry source.
+// https://ui.shadcn.com/r/styles/new-york/button.json
+import React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-const variants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        outline: "border border-input bg-background hover:bg-accent",
-        ghost: "hover:bg-accent"
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-md px-3",
-        icon: "h-10 w-10"
-      }
+const buttonVariants = cva("ui-button", {
+  variants: {
+    variant: {
+      default: "ui-button--primary",
+      outline: "ui-button--outline",
+      ghost: "ui-button--ghost"
     },
-    defaultVariants: { variant: "default", size: "default" }
+    size: {
+      default: "ui-button--default",
+      sm: "ui-button--sm",
+      icon: "ui-button--icon"
+    }
+  },
+  defaultVariants: { variant: "ghost", size: "sm" }
+});
+const Button = React.forwardRef(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Component = asChild ? Slot : "button";
+    return (
+      <Component
+        ref={ref}
+        className={twMerge(clsx(buttonVariants({ variant, size }), className))}
+        {...props}
+      />
+    );
   }
 );
-export function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}) {
-  const Component = asChild ? Slot : "button";
-  return (
-    <Component
-      className={twMerge(clsx(variants({ variant, size }), className))}
-      {...props}
-    />
-  );
-}
+Button.displayName = "Button";
+export { Button, buttonVariants };

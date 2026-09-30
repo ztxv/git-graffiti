@@ -15,8 +15,12 @@ import {
   MousePointer2,
   Check,
   Terminal,
-  X
+  X,
+  Circle,
+  ChevronDown,
+  LoaderCircle
 } from "lucide-react";
+import { MarkGithubIcon } from "@primer/octicons-react";
 import {
   calendar,
   rasterize,
@@ -25,6 +29,12 @@ import {
   dateKey
 } from "../shared/art.mjs";
 import { PublishInstructions } from "./components/publish-instructions";
+import { motion, MotionConfig, useReducedMotion } from "motion/react";
+import {
+  AnimatedButton as Button,
+  GenerationProgress
+} from "./components/interface-motion";
+import { ThemeToggle } from "./components/theme-toggle";
 import "./style.css";
 const today = dateKey(Date.now()),
   thisYear = new Date().getUTCFullYear();
@@ -73,6 +83,7 @@ function Mini({ text }) {
   );
 }
 function App() {
+  const reduced = useReducedMotion();
   const [design, setDesign] = useState(initialDesign),
     [past, setPast] = useState([]),
     [future, setFuture] = useState([]);
@@ -318,33 +329,40 @@ function App() {
     <>
       <header className="topbar">
         <a className="brand" href="/" aria-label="Git Graffiti home">
-          <span className="brandmark">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
           git<span>graffiti</span>
           <sup>STUDIO</sup>
         </a>
         <div className="top-right">
-          <span className="status-dot" /> Local workspace{" "}
-          <span className="top-divider" />{" "}
-          <a href="#how-it-works">
-            How it works <ArrowUpRight size={14} />
+          <a href="#how-it-works" className="how-link">
+            How it works <ArrowUpRight size={14} aria-hidden="true" />
           </a>
+          <motion.a
+            className="header-icon ui-button ui-button--icon github-link"
+            href="https://github.com/ztxv/git-graffiti"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View Git Graffiti on GitHub (opens in a new tab)"
+            title="View Git Graffiti on GitHub"
+            whileHover={reduced ? undefined : { y: -1 }}
+            whileTap={reduced ? undefined : { scale: 0.97, y: 0 }}
+            transition={{ duration: reduced ? 0 : 0.16 }}
+          >
+            <MarkGithubIcon size={18} aria-hidden="true" />
+          </motion.a>
+          <ThemeToggle />
         </div>
       </header>
       <main>
-        <section className="hero">
+        <motion.section
+          className="hero"
+          initial={reduced ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
           <div>
             <div className="eyebrow">
-              <span /> YOUR PROFILE. YOUR CANVAS.
+              <Circle size={7} className="eyebrow-dot" aria-hidden="true" />{" "}
+              YOUR PROFILE. YOUR CANVAS.
             </div>
             <h1>
               Leave your <em>mark.</em>
@@ -358,9 +376,12 @@ function App() {
           <div className="hero-stamp">
             <span>SMALL PIXELS.</span>
             <strong>BIG PERSONALITY.</strong>
-            <span>7 ROWS × ENDLESS POSSIBILITIES ↗</span>
+            <span>
+              7 ROWS × ENDLESS POSSIBILITIES{" "}
+              <ArrowUpRight size={12} aria-hidden="true" />
+            </span>
           </div>
-        </section>
+        </motion.section>
         <div className="section-heading">
           <div>
             <span className="step">01</span>
@@ -368,12 +389,12 @@ function App() {
             <span className="small muted">One square. One day.</span>
           </div>
           <div className="file-actions">
-            <button onClick={() => importer.current.click()} disabled={busy}>
+            <Button onClick={() => importer.current.click()} disabled={busy}>
               <Upload size={15} /> Import
-            </button>
-            <button onClick={exportDesign}>
+            </Button>
+            <Button onClick={exportDesign}>
               <Download size={15} /> Export design
-            </button>
+            </Button>
             <input
               ref={importer}
               type="file"
@@ -391,7 +412,7 @@ function App() {
                 ["erase", Eraser, "Erase"],
                 ["cycle", RefreshCw, "Cycle"]
               ].map(([id, Icon, label]) => (
-                <button
+                <Button
                   key={id}
                   className={tool === id ? "selected" : ""}
                   aria-pressed={tool === id}
@@ -400,10 +421,10 @@ function App() {
                 >
                   <Icon size={15} />
                   {label}
-                </button>
+                </Button>
               ))}
               <span className="tool-divider" />
-              <button
+              <Button
                 className="icon-button"
                 aria-label="Undo"
                 title="Undo"
@@ -411,8 +432,8 @@ function App() {
                 disabled={busy || !past.length}
               >
                 <Undo2 size={16} />
-              </button>
-              <button
+              </Button>
+              <Button
                 className="icon-button"
                 aria-label="Redo"
                 title="Redo"
@@ -420,7 +441,7 @@ function App() {
                 disabled={busy || !future.length}
               >
                 <Redo2 size={16} />
-              </button>
+              </Button>
             </div>
             <label className="year-select">
               YEAR{" "}
@@ -560,7 +581,7 @@ function App() {
               <strong>{weeks} × 7</strong>
               <span>calendar grid</span>
             </div>
-            <button
+            <Button
               className="clear"
               disabled={busy || !active}
               onClick={() =>
@@ -571,7 +592,7 @@ function App() {
               }
             >
               <Trash2 size={14} /> Clear canvas
-            </button>
+            </Button>
           </div>
         </section>
         <div className="editor-panels">
@@ -599,9 +620,9 @@ function App() {
                   placeholder="HELLO WORLD"
                   disabled={busy}
                 />
-                <button className="dark-button" disabled={busy}>
+                <Button className="dark-button" disabled={busy}>
                   Stamp text <ArrowRight size={15} />
-                </button>
+                </Button>
               </div>
               <div className="text-options">
                 <label>
@@ -632,7 +653,7 @@ function App() {
             <p>A little quiet. Or all the way loud.</p>
             <div className="swatches" role="group" aria-label="Brush shade">
               {[0, 1, 2, 3, 4].map(n => (
-                <button
+                <Button
                   key={n}
                   className={`swatch level-${n} ${shade === n ? "chosen" : ""}`}
                   aria-pressed={shade === n}
@@ -640,12 +661,13 @@ function App() {
                   onClick={() => setShade(n)}
                 >
                   {shade === n && <Check size={18} />}
-                </button>
+                </Button>
               ))}
             </div>
             <details>
               <summary>
-                Commit counts per shade <span>↗</span>
+                Commit counts per shade{" "}
+                <ChevronDown size={14} aria-hidden="true" />
               </summary>
               <div className="mapping">
                 {[1, 2, 3, 4].map(n => (
@@ -690,7 +712,7 @@ function App() {
             ["< />", "Made of code"],
             ["HI!", "Say hello"]
           ].map(([value, label]) => (
-            <button
+            <Button
               key={label}
               className="preset"
               disabled={busy}
@@ -704,7 +726,7 @@ function App() {
                 {label}
                 <ArrowUpRight size={14} />
               </span>
-            </button>
+            </Button>
           ))}
         </div>
         <div className="feedback" aria-live="polite">
@@ -716,7 +738,7 @@ function App() {
             <p>
               {message || (
                 <>
-                  <span className="status-dot" />
+                  <Circle className="status-dot" size={7} aria-hidden="true" />
                   {saved
                     ? "Draft saved in this browser"
                     : "Browser storage unavailable — export to save your design"}
@@ -800,19 +822,26 @@ function App() {
                   <span>
                     <Terminal size={14} /> Created on your machine
                   </span>
-                  <button
+                  <Button
                     className="green-button"
                     disabled={
                       busy || !total || !!designError || !config?.gitAvailable
                     }
                   >
+                    {busy && (
+                      <LoaderCircle
+                        size={16}
+                        className="loading-icon"
+                        aria-hidden="true"
+                      />
+                    )}
                     {submitting
                       ? "Preparing…"
                       : job?.status === "running"
                       ? "Generating…"
                       : "Generate repository"}
-                    <ArrowRight size={16} />
-                  </button>
+                    {!busy && <ArrowRight size={16} />}
+                  </Button>
                 </div>
               </fieldset>
             </form>
@@ -835,13 +864,16 @@ function App() {
                     }
                   </strong>
                   {job.status === "running" && (
-                    <button onClick={cancel} disabled={cancelPending}>
+                    <Button onClick={cancel} disabled={cancelPending}>
                       <X size={14} />
                       {cancelPending ? "Cancelling…" : "Cancel"}
-                    </button>
+                    </Button>
                   )}
                 </div>
-                <progress value={job.completed} max={job.total} />
+                <GenerationProgress
+                  completed={job.completed}
+                  total={job.total}
+                />
                 <small>
                   {job.completed.toLocaleString()} /{" "}
                   {job.total.toLocaleString()} commits
@@ -862,10 +894,16 @@ function App() {
             git<span>graffiti</span>
           </span>
           <span>A little less spreadsheet. A little more self-expression.</span>
-          <span>MADE TO MAKE YOUR MARK ↗</span>
+          <span>
+            MADE TO MAKE YOUR MARK <ArrowUpRight size={12} aria-hidden="true" />
+          </span>
         </footer>
       </main>
     </>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(
+  <MotionConfig reducedMotion="user">
+    <App />
+  </MotionConfig>
+);
