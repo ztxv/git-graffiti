@@ -76,6 +76,46 @@ p {
 button:hover:not(:disabled) {
   filter: brightness(0.93);
 }
+/* Hosted-demo only (rendered when built with `npm run build:demo`). */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 9px 5%;
+  font-size: 12px;
+  background: var(--soft);
+  border-bottom: 1px solid var(--border);
+}
+.demo-banner-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+.demo-banner-text {
+  color: var(--muted);
+}
+.demo-banner a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--green);
+}
+.demo-banner a:hover {
+  text-decoration: underline;
+}
+.demo-note {
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
 .topbar {
   height: 83px;
   border-bottom: 1px solid var(--border);

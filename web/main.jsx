@@ -35,13 +35,18 @@ import {
   GenerationProgress
 } from "./components/interface-motion";
 import { ThemeToggle } from "./components/theme-toggle";
+import { DemoBanner } from "./components/demo-banner";
 import "./style.css";
+// Hosted demo build (`npm run build:demo`): same UI, but the server is
+// simulated in the browser and nothing is persisted. Statically replaced by
+// Vite, so the normal build drops all demo code.
+const DEMO = import.meta.env.VITE_DEMO === "true";
 const today = dateKey(Date.now()),
   thisYear = new Date().getUTCFullYear();
 const storageKey = "git-graffiti-v1";
 function initialDesign() {
   try {
-    const saved = localStorage.getItem(storageKey);
+    const saved = DEMO ? null : localStorage.getItem(storageKey);
     if (saved) return validateDesign(JSON.parse(saved));
   } catch {}
   const year = thisYear - 1,
@@ -54,6 +59,7 @@ function initialDesign() {
   };
 }
 async function api(route, body) {
+  if (DEMO) return (await import("./demo.js")).demoApi(route, body);
   const r = await fetch(
     route,
     body === undefined
@@ -96,8 +102,8 @@ function App() {
     [hover, setHover] = useState(null),
     [focus, setFocus] = useState(7);
   const [identity, setIdentity] = useState({
-      name: "",
-      email: "",
+      name: DEMO ? "Ada Lovelace" : "",
+      email: DEMO ? "ada@example.com" : "",
       folder: "my-graffiti"
     }),
     [config, setConfig] = useState(null),
@@ -134,6 +140,7 @@ function App() {
       .catch(e => setError(e.message));
   }, []);
   useEffect(() => {
+    if (DEMO) return;
     try {
       localStorage.setItem(storageKey, JSON.stringify(validateDesign(design)));
       setSaved(true);
@@ -327,6 +334,7 @@ function App() {
   });
   return (
     <>
+      {DEMO && <DemoBanner />}
       <header className="topbar">
         <a className="brand" href="/" aria-label="Git Graffiti home">
           git<span>graffiti</span>
@@ -739,7 +747,9 @@ function App() {
               {message || (
                 <>
                   <Circle className="status-dot" size={7} aria-hidden="true" />
-                  {saved
+                  {DEMO
+                    ? "Demo mode: your drawing isn't saved. Export it to keep it."
+                    : saved
                     ? "Draft saved in this browser"
                     : "Browser storage unavailable — export to save your design"}
                 </>
@@ -820,7 +830,8 @@ function App() {
                 </label>
                 <div className="generate-footer">
                   <span>
-                    <Terminal size={14} /> Created on your machine
+                    <Terminal size={14} />{" "}
+                    {DEMO ? "Simulated in this demo" : "Created on your machine"}
                   </span>
                   <Button
                     className="green-button"
@@ -882,6 +893,13 @@ function App() {
                 {job.status === "complete" && (
                   <>
                     <code className="output-path">{job.path}</code>
+                    {DEMO && (
+                      <p className="demo-note">
+                        This is a demo, so no repository was created. Run Git
+                        Graffiti locally to generate the real thing, then use
+                        the command below to push it.
+                      </p>
+                    )}
                     <PublishInstructions path={job.path} />
                   </>
                 )}

@@ -124,6 +124,17 @@ The generated command creates a new GitHub repository and pushes the local `main
 
 For contributions to count, use an email associated with your GitHub account and an eligible branch in a standalone repository. Review [GitHub's contribution rules](https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference). Private contribution visibility depends on your profile settings.
 
+## Hosted demo
+
+The studio can be built as a static, server-free demo for hosts like Vercel. It's the same interface; the local API is replaced by an in-browser simulation, nothing is saved, and "Generate repository" only plays a mock progress bar.
+
+```bash
+npm run dev:demo     # try it locally at http://127.0.0.1:5173
+npm run build:demo   # static site in dist/
+```
+
+To deploy on Vercel, import the repository and keep the defaults; `vercel.json` already sets the build command and output directory. The regular `npm run build` / `npm start` remain the real app.
+
 ## Technology
 
 | Layer | Technology |
