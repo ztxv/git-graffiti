@@ -145,7 +145,14 @@ function createServer({ root = path.resolve(__dirname, "../generated") } = {}) {
             ".html": "text/html",
             ".js": "text/javascript",
             ".css": "text/css",
-            ".svg": "image/svg+xml"
+            ".svg": "image/svg+xml",
+            ".png": "image/png",
+            ".ico": "image/vnd.microsoft.icon",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".webp": "image/webp",
+            ".json": "application/json",
+            ".woff2": "font/woff2"
           }[path.extname(file)] || "application/octet-stream",
         "X-Content-Type-Options": "nosniff",
         "Content-Security-Policy":
