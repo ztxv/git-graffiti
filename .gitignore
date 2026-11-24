@@ -6,3 +6,4 @@ dist/
 generated/
 my-history/
 output/
+.vercel/
