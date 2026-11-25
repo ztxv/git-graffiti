@@ -158,3 +158,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Link-preview card fonts
+
+The link-preview image source (`scripts/og-image.html`) renders with Latin-only subsets of **Inter** (© The Inter Project Authors) and **Liberation Serif Italic** (renamed "Graffiti Serif"), both under the SIL Open Font License 1.1. They are not loaded by the app. See [`scripts/fonts/OFL.txt`](scripts/fonts/OFL.txt) for the copyright notices and license text.

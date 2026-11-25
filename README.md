@@ -135,6 +135,14 @@ npm run build:demo   # static site in dist/
 
 To deploy on Vercel, import the repository and keep the defaults; `vercel.json` already sets the build command and output directory. The regular `npm run build` / `npm start` remain the real app.
 
+## Link previews
+
+Pasting the site into iMessage, Slack, Discord, X, or LinkedIn shows a branded card (`public/og-image.png`, 1200×630) with a title and description. Those come from the Open Graph and Twitter tags in [`index.html`](index.html). Crawlers don't run JavaScript, so the tags live in the static HTML, and the web manifest and app icons sit next to the image in `public/`.
+
+- **Domain:** the `og:url`, `og:image`, `twitter:image`, and `canonical` URLs are absolute (`https://git-graffiti.vercel.app/…`) because relative URLs fail in iMessage. If you deploy under a different domain, update those four in `index.html`.
+- **Re-render the image:** its source is [`scripts/og-image.html`](scripts/og-image.html). The comment at the top has a one-line Playwright command that writes `public/og-image.png`. Fonts are self-hosted subsets in `scripts/fonts/`, so rendering needs no network.
+- **Caching:** apps cache previews per URL. After a redeploy, send the link with a throwaway ending such as `?v=2` to see the new card right away. Slack, Discord, X, and LinkedIn also have link-preview debuggers if one shows an old card.
+
 ## Technology
 
 | Layer | Technology |
@@ -175,6 +183,9 @@ web/
     ui/button.jsx           Adapted shadcn/Radix button primitive
 public/
   theme.js                  Theme selection before the first render
+  favicon.*, icon-*.png     App icons; manifest.webmanifest and og-image.png
+scripts/
+  og-image.html             Source of the link-preview card (fonts/ holds its OFL subsets)
 src/
   server.js                 Local API, preview storage, generation jobs
   repository.js             Git execution, identity, progress, cleanup
