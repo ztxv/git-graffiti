@@ -17,6 +17,7 @@ test("static files are served with proper content types", async () => {
     "__static-test.jpg": "image/jpeg",
     "__static-test.webp": "image/webp",
     "__static-test.json": "application/json",
+    "__static-test.webmanifest": "application/manifest+json",
     "__static-test.woff2": "font/woff2",
     "__static-test.unknown": "application/octet-stream"
   };

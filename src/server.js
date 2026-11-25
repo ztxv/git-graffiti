@@ -152,6 +152,7 @@ function createServer({ root = path.resolve(__dirname, "../generated") } = {}) {
             ".jpeg": "image/jpeg",
             ".webp": "image/webp",
             ".json": "application/json",
+            ".webmanifest": "application/manifest+json",
             ".woff2": "font/woff2"
           }[path.extname(file)] || "application/octet-stream",
         "X-Content-Type-Options": "nosniff",
